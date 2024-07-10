@@ -62,7 +62,7 @@ class LoginPage extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
-                      child: Text("Submit"))
+                      child: Text("Login"))
                 ],
               ))
         ]),
