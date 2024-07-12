@@ -11,6 +11,24 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String name = "";
   bool isTrue = false;
+
+  final _formKey = GlobalKey<FormState>();
+
+  moveToHome(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isTrue = !isTrue;
+      });
+
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.pushNamed(context, MyRoutes.homeRoute).then((_) {
+        setState(() {
+          isTrue = false;
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -19,99 +37,95 @@ class _LoginPageState extends State<LoginPage> {
         appBar: AppBar(
           title: const Text('Login'),
         ),
-        body: Column(children: [
-          Container(
-            width: double.infinity,
-            height: 300,
-            child: Image.asset(
-              'assets/images/img.jpg',
-              fit: BoxFit.contain,
+        body: Form(
+          key: _formKey,
+          child: Column(children: [
+            Container(
+              width: double.infinity,
+              height: 300,
+              child: Image.asset(
+                'assets/images/img.jpg',
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          Text(
-            'Welcome $name',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
-              child: Column(
-                children: [
-                  TextFormField(
-                    onChanged: (value) {
-                      name = value;
-                      setState(() {});
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Enter Email',
-                      labelText: 'Email',
+            Text(
+              'Welcome $name',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      onChanged: (value) {
+                        name = value;
+                        setState(() {});
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter Email',
+                        labelText: 'Email',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter user name';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    obscuringCharacter: "*",
-                    decoration: InputDecoration(
-                      hintText: 'Enter Password',
-                      labelText: 'Password',
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      setState(() {
-                        isTrue = !isTrue;
-                      });
-
-                      await Future.delayed(Duration(seconds: 1));
-                      Navigator.pushNamed(context, MyRoutes.homeRoute)
-                          .then((_) {
-                        setState(() {
-                          isTrue = false;
-                        });
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: Duration(seconds: 1),
-                      width: isTrue ? 50 : 150,
-                      height: 50,
-                      alignment: Alignment.center,
-                      child: isTrue
-                          ? Icon(
-                              Icons.done,
-                              color: Colors.white,
-                            )
-                          : Text(
-                              "Login",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                      decoration: BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.circular(isTrue ? 50 : 8)),
+                    TextFormField(
+                      obscureText: true,
+                      obscuringCharacter: "*",
+                      decoration: InputDecoration(
+                        hintText: 'Enter Password',
+                        labelText: 'Password',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter password';
+                        } else if (value.length < 6) {
+                          return 'Password must be 6 characters long';
+                        }
+                        return null;
+                      },
                     ),
-                  )
-                  // ElevatedButton(
-                  //     onPressed: () {
-                  //       Navigator.pushNamed(context, MyRoutes.homeRoute);
-                  //     },
-                  //     style: TextButton.styleFrom(
-                  //       minimumSize: Size(400, 60),
-                  //       backgroundColor: Colors.blue,
-                  //       foregroundColor: Colors.white,
-                  //       shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(10)),
-                  //     ),
-                  //     child: Text("Login"))
-                ],
-              ))
-        ]),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Material(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.circular(isTrue ? 50 : 8),
+                      child: InkWell(
+                        splashColor: Colors.red,
+                        onTap: () => moveToHome(context),
+                        child: AnimatedContainer(
+                          duration: Duration(seconds: 1),
+                          width: isTrue ? 50 : 150,
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: isTrue
+                              ? Icon(
+                                  Icons.done,
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  "Login",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                        ),
+                      ),
+                    )
+                  ],
+                ))
+          ]),
+        ),
       ),
     );
   }
